@@ -1,0 +1,94 @@
+basePath: /api/v1
+definitions:
+  api.BaZiRequest:
+    properties:
+      bazi:
+        example: 壬戌 壬寅 庚午 丙戌
+        type: string
+    required:
+    - bazi
+    type: object
+  api.BaZiResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data: {}
+      message:
+        example: success
+        type: string
+    type: object
+info:
+  contact: {}
+  description: 基于Go语言开发的八字分析系统，提供完整的6步分析流程
+  title: 八字分析系统 API
+  version: "1.0"
+paths:
+  /bazi/analyze:
+    get:
+      description: 输入八字四柱，返回完整6步分析结果。支持JSON和Markdown格式，通过Accept头或format参数控制
+      parameters:
+      - description: 八字四柱，格式：年柱 月柱 日柱 时柱
+        example: 壬戌 壬寅 庚午 丙戌
+        in: query
+        name: bazi
+        required: true
+        type: string
+      - default: json
+        description: 返回格式：json或markdown
+        enum:
+        - json
+        - markdown
+        in: query
+        name: format
+        type: string
+      produces:
+      - application/json
+      - text/markdown
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.BaZiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.BaZiResponse'
+      summary: 八字分析接口（GET方式）
+      tags:
+      - 八字分析
+    post:
+      consumes:
+      - application/json
+      description: 输入八字四柱，返回完整6步分析结果。支持JSON和Markdown格式，通过Accept头或format参数控制
+      parameters:
+      - description: 八字请求体
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.BaZiRequest'
+      - default: json
+        description: 返回格式：json或markdown
+        enum:
+        - json
+        - markdown
+        in: query
+        name: format
+        type: string
+      produces:
+      - application/json
+      - text/markdown
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.BaZiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.BaZiResponse'
+      summary: 八字分析接口（POST方式）
+      tags:
+      - 八字分析
+swagger: "2.0"
