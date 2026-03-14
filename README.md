@@ -52,7 +52,17 @@ go mod download
 # 运行API服务器
 go run main.go
 ```
+### 使用方式
+```bash
+# 编译
+go build -o bazi-analyzer.exe .
 
+# 命令行运行
+.\bazi-analyzer.exe "壬戌 壬寅 庚午 丙戌"
+
+# 交互式运行
+.\bazi-analyzer.exe
+```
 ### 使用示例
 
 #### 方式1：通过API调用（推荐）
