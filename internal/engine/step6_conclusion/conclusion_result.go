@@ -88,7 +88,7 @@ func getHeJuType(step2Result *step2_rebuild.Step2RebuildResult) string {
 }
 
 func getDominantWuXing(step2Result *step2_rebuild.Step2RebuildResult, step4Result *step4_xiji.Step4XiJiResult) base.WuXing {
-	for _, fx := range step4Result.FavorableWuXing {
+	for _, fx := range step4Result.YongShenWuXing {
 		return fx
 	}
 	return ""
@@ -103,7 +103,7 @@ func analyzeGeJuLevel(chart *base.BaZiChart, step1Result *step1_scan.Step1ScanRe
 	if step3Result.WangShuaiType == step3_wangshuai.CongRuo || step3Result.WangShuaiType == step3_wangshuai.CongQiang {
 		score += 2
 	}
-	if len(step4Result.FavorableWuXing) > 0 {
+	if len(step4Result.YongShenWuXing) > 0 {
 		score += 1
 	}
 
@@ -136,9 +136,9 @@ func analyzeSuiYun(chart *base.BaZiChart, step1Result *step1_scan.Step1ScanResul
 		}
 	}
 
-	if len(step4Result.FavorableWuXing) > 0 {
+	if len(step4Result.YongShenWuXing) > 0 {
 		favStr := ""
-		for _, wx := range step4Result.FavorableWuXing {
+		for _, wx := range step4Result.YongShenWuXing {
 			favStr += wx.String() + "、"
 		}
 		if len(favStr) > 0 {
@@ -147,9 +147,9 @@ func analyzeSuiYun(chart *base.BaZiChart, step1Result *step1_scan.Step1ScanResul
 		result.SuiYunAnalysis = append(result.SuiYunAnalysis, "岁运走"+favStr+"运为吉，主得助力")
 	}
 
-	if len(step4Result.UnfavorableWuXing) > 0 {
+	if len(step4Result.JiShenWuXing) > 0 {
 		unfavStr := ""
-		for _, wx := range step4Result.UnfavorableWuXing {
+		for _, wx := range step4Result.JiShenWuXing {
 			unfavStr += wx.String() + "、"
 		}
 		if len(unfavStr) > 0 {
@@ -190,7 +190,7 @@ func generateOverallSummary(chart *base.BaZiChart, step1Result *step1_scan.Step1
 	}
 
 	favStr := ""
-	for _, wx := range step4Result.FavorableWuXing {
+	for _, wx := range step4Result.YongShenWuXing {
 		favStr += wx.String() + "、"
 	}
 	if len(favStr) > 0 {
@@ -218,7 +218,7 @@ func generateKeyAdvice(chart *base.BaZiChart, step1Result *step1_scan.Step1ScanR
 	}
 
 	favStr := ""
-	for _, wx := range step4Result.FavorableWuXing {
+	for _, wx := range step4Result.YongShenWuXing {
 		favStr += wx.String() + "、"
 	}
 	if len(favStr) > 0 {

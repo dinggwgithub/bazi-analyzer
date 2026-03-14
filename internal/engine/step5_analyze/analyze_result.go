@@ -137,7 +137,7 @@ func hasWuHeOrSiChong(step1Result *step1_scan.Step1ScanResult, tg1, tg2 base.Tia
 }
 
 func isXiJiFavorable(step4Result *step4_xiji.Step4XiJiResult, wx1, wx2 base.WuXing) bool {
-	for _, fx := range step4Result.FavorableWuXing {
+	for _, fx := range step4Result.YongShenWuXing {
 		if wx1 == fx || wx2 == fx {
 			return true
 		}

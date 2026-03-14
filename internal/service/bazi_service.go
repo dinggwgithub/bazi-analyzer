@@ -33,7 +33,7 @@ func AnalyzeBaZi(input string) (*BaZiFullAnalysis, error) {
 	step1Result := step1_scan.ScanBaZi(&chart)
 	step2Result := step2_rebuild.RebuildBaZi(&chart, step1Result)
 	step3Result := step3_wangshuai.AnalyzeWangShuai(&chart, step2Result)
-	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result)
+	step4Result := step4_xiji.AnalyzeXiJi(&chart, step2Result, step3Result)
 	step5Result := step5_analyze.AnalyzeInteractions(&chart, step1Result, step2Result, step4Result)
 	step6Result := step6_conclusion.AnalyzeConclusion(&chart, step1Result, step2Result, step3Result, step4Result, step5Result)
 
@@ -133,12 +133,49 @@ func (r *BaZiFullAnalysis) ToMarkdown() string {
 	}
 
 	if r.Step4Result != nil {
-		sb.WriteString("## 第四步：喜忌用神分析\n\n")
-		sb.WriteString(fmt.Sprintf("- **喜用五行**：%s\n", joinWuXing(r.Step4Result.FavorableWuXing)))
-		sb.WriteString(fmt.Sprintf("- **喜用十神**：%s\n", strings.Join(r.Step4Result.FavorableShiShen, "、")))
-		sb.WriteString(fmt.Sprintf("- **忌神五行**：%s\n", joinWuXing(r.Step4Result.UnfavorableWuXing)))
-		sb.WriteString(fmt.Sprintf("- **忌神十神**：%s\n", strings.Join(r.Step4Result.UnfavorableShiShen, "、")))
-		sb.WriteString(fmt.Sprintf("- **判断依据**：%s\n\n", r.Step4Result.Reason))
+		sb.WriteString("## 第四步：喜忌用神分析（病药理论综合诊断）\n\n")
+
+		// 多维度诊断
+		sb.WriteString("### 多维度病源诊断\n\n")
+
+		if r.Step4Result.TiaoHouAnalysis != nil && r.Step4Result.TiaoHouAnalysis.Severity > 0 {
+			sb.WriteString(fmt.Sprintf("**1. 调候诊断**：%s（严重程度：%d/5）\n", r.Step4Result.TiaoHouAnalysis.BingDesc, r.Step4Result.TiaoHouAnalysis.Severity))
+			sb.WriteString(fmt.Sprintf("- 建议用神：%s\n", joinWuXing(r.Step4Result.TiaoHouAnalysis.YaoWuXing)))
+			sb.WriteString(fmt.Sprintf("- 依据：%s\n\n", r.Step4Result.TiaoHouAnalysis.Reason))
+		}
+
+		if r.Step4Result.TongGuanAnalysis != nil && r.Step4Result.TongGuanAnalysis.Severity > 0 {
+			sb.WriteString(fmt.Sprintf("**2. 通关诊断**：%s（严重程度：%d/5）\n", r.Step4Result.TongGuanAnalysis.BingDesc, r.Step4Result.TongGuanAnalysis.Severity))
+			sb.WriteString(fmt.Sprintf("- 建议用神：%s\n", joinWuXing(r.Step4Result.TongGuanAnalysis.YaoWuXing)))
+			sb.WriteString(fmt.Sprintf("- 依据：%s\n\n", r.Step4Result.TongGuanAnalysis.Reason))
+		}
+
+		if r.Step4Result.FuYiAnalysis != nil {
+			sb.WriteString(fmt.Sprintf("**3. 扶抑诊断**：%s（严重程度：%d/5）\n", r.Step4Result.FuYiAnalysis.BingDesc, r.Step4Result.FuYiAnalysis.Severity))
+			sb.WriteString(fmt.Sprintf("- 建议用神：%s\n", joinWuXing(r.Step4Result.FuYiAnalysis.YaoWuXing)))
+			sb.WriteString(fmt.Sprintf("- 依据：%s\n\n", r.Step4Result.FuYiAnalysis.Reason))
+		}
+
+		if r.Step4Result.GeJuAnalysis != nil && r.Step4Result.GeJuAnalysis.Severity > 0 {
+			sb.WriteString(fmt.Sprintf("**4. 格局诊断**：%s（严重程度：%d/5）\n", r.Step4Result.GeJuAnalysis.BingDesc, r.Step4Result.GeJuAnalysis.Severity))
+			sb.WriteString(fmt.Sprintf("- 建议用神：%s\n", joinWuXing(r.Step4Result.GeJuAnalysis.YaoWuXing)))
+			sb.WriteString(fmt.Sprintf("- 依据：%s\n\n", r.Step4Result.GeJuAnalysis.Reason))
+		}
+
+		// 核心病源
+		sb.WriteString("### 核心病源\n\n")
+		sb.WriteString(fmt.Sprintf("**%s**\n\n", r.Step4Result.CoreBingDesc))
+
+		// 喜忌用神结论
+		sb.WriteString("### 喜忌用神结论\n\n")
+		sb.WriteString(fmt.Sprintf("- **用神（药）五行**：%s\n", joinWuXing(r.Step4Result.YongShenWuXing)))
+		sb.WriteString(fmt.Sprintf("- **用神（药）十神**：%s\n", strings.Join(r.Step4Result.YongShenShiShen, "、")))
+		sb.WriteString(fmt.Sprintf("- **喜神五行**：%s\n", joinWuXing(r.Step4Result.XiShenWuXing)))
+		sb.WriteString(fmt.Sprintf("- **喜神十神**：%s\n", strings.Join(r.Step4Result.XiShenShiShen, "、")))
+		sb.WriteString(fmt.Sprintf("- **忌神五行**：%s\n", joinWuXing(r.Step4Result.JiShenWuXing)))
+		sb.WriteString(fmt.Sprintf("- **忌神十神**：%s\n", strings.Join(r.Step4Result.JiShenShiShen, "、")))
+		sb.WriteString(fmt.Sprintf("- **判定依据**：%s\n", r.Step4Result.YongShenReason))
+		sb.WriteString(fmt.Sprintf("- **综合结论**：%s\n\n", r.Step4Result.Summary))
 	}
 
 	if r.Step5Result != nil {
