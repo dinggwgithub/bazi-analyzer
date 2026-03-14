@@ -23,7 +23,7 @@ func TestAnalyzeConclusion(t *testing.T) {
 	step1Result := step1_scan.ScanBaZi(&chart)
 	step2Result := step2_rebuild.RebuildBaZi(&chart, step1Result)
 	step3Result := step3_wangshuai.AnalyzeWangShuai(&chart, step2Result)
-	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result)
+	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result, step2Result)
 	step5Result := step5_analyze.AnalyzeInteractions(&chart, step1Result, step2Result, step4Result)
 	result := AnalyzeConclusion(&chart, step1Result, step2Result, step3Result, step4Result, step5Result)
 
@@ -103,7 +103,7 @@ func TestFullAnalysisFlow(t *testing.T) {
 	t.Logf("  结论: %s", step3Result.WangShuaiType)
 	t.Log("")
 
-	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result)
+	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result, step2Result)
 	t.Log("=== 第四步：喜忌用神分析 ===")
 	t.Logf("  喜用五行: %v", step4Result.FavorableWuXing)
 	t.Logf("  喜用十神: %v", step4Result.FavorableShiShen)
