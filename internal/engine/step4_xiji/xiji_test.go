@@ -19,7 +19,7 @@ func TestAnalyzeXiJi(t *testing.T) {
 	step1Result := step1_scan.ScanBaZi(&chart)
 	step2Result := step2_rebuild.RebuildBaZi(&chart, step1Result)
 	step3Result := step3_wangshuai.AnalyzeWangShuai(&chart, step2Result)
-	result := AnalyzeXiJi(&chart, step3Result)
+	result := AnalyzeXiJi(&chart, step3Result, step2Result)
 
 	t.Logf("八字: %s", input)
 	t.Logf("日主: %s (%s)", result.DayMaster.Name, result.DayMasterWuXing)

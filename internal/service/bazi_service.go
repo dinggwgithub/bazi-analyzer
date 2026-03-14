@@ -33,7 +33,7 @@ func AnalyzeBaZi(input string) (*BaZiFullAnalysis, error) {
 	step1Result := step1_scan.ScanBaZi(&chart)
 	step2Result := step2_rebuild.RebuildBaZi(&chart, step1Result)
 	step3Result := step3_wangshuai.AnalyzeWangShuai(&chart, step2Result)
-	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result)
+	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result, step2Result)
 	step5Result := step5_analyze.AnalyzeInteractions(&chart, step1Result, step2Result, step4Result)
 	step6Result := step6_conclusion.AnalyzeConclusion(&chart, step1Result, step2Result, step3Result, step4Result, step5Result)
 

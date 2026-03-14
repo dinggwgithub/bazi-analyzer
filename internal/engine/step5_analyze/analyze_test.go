@@ -20,7 +20,7 @@ func TestAnalyzeInteractions(t *testing.T) {
 	step1Result := step1_scan.ScanBaZi(&chart)
 	step2Result := step2_rebuild.RebuildBaZi(&chart, step1Result)
 	step3Result := step3_wangshuai.AnalyzeWangShuai(&chart, step2Result)
-	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result)
+	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result, step2Result)
 	result := AnalyzeInteractions(&chart, step1Result, step2Result, step4Result)
 
 	t.Logf("八字: %s", input)
