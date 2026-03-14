@@ -33,7 +33,7 @@ func AnalyzeBaZi(input string) (*BaZiFullAnalysis, error) {
 	step1Result := step1_scan.ScanBaZi(&chart)
 	step2Result := step2_rebuild.RebuildBaZi(&chart, step1Result)
 	step3Result := step3_wangshuai.AnalyzeWangShuai(&chart, step2Result)
-	step4Result := step4_xiji.AnalyzeXiJi(&chart, step3Result)
+	step4Result := step4_xiji.AnalyzeXiJiWithRebuild(&chart, step2Result, step3Result)
 	step5Result := step5_analyze.AnalyzeInteractions(&chart, step1Result, step2Result, step4Result)
 	step6Result := step6_conclusion.AnalyzeConclusion(&chart, step1Result, step2Result, step3Result, step4Result, step5Result)
 
@@ -133,7 +133,45 @@ func (r *BaZiFullAnalysis) ToMarkdown() string {
 	}
 
 	if r.Step4Result != nil {
-		sb.WriteString("## 第四步：喜忌用神分析\n\n")
+		sb.WriteString("## 第四步：喜忌用神分析（病药理论）\n\n")
+
+		if r.Step4Result.CoreBingYuan != "" {
+			sb.WriteString("### 核心病源诊断\n\n")
+			sb.WriteString(fmt.Sprintf("- **核心病源**：%s\n\n", r.Step4Result.CoreBingYuan))
+		}
+
+		if r.Step4Result.YongShen != "" {
+			sb.WriteString("### 用神判定\n\n")
+			sb.WriteString(fmt.Sprintf("- **用神**：%s\n", r.Step4Result.YongShen))
+			sb.WriteString(fmt.Sprintf("- **用神类型**：%s\n", r.Step4Result.YongShenType))
+			sb.WriteString(fmt.Sprintf("- **用神说明**：%s\n\n", r.Step4Result.YongShenDesc))
+		}
+
+		if len(r.Step4Result.XiShen) > 0 {
+			sb.WriteString("### 喜神\n\n")
+			for _, xs := range r.Step4Result.XiShen {
+				sb.WriteString(fmt.Sprintf("- %s\n", xs))
+			}
+			sb.WriteString("\n")
+		}
+
+		if len(r.Step4Result.JiShen) > 0 {
+			sb.WriteString("### 忌神\n\n")
+			for _, js := range r.Step4Result.JiShen {
+				sb.WriteString(fmt.Sprintf("- %s\n", js))
+			}
+			sb.WriteString("\n")
+		}
+
+		if len(r.Step4Result.AnalysisPath) > 0 {
+			sb.WriteString("### 分析路径\n\n")
+			for _, path := range r.Step4Result.AnalysisPath {
+				sb.WriteString(fmt.Sprintf("- %s\n", path))
+			}
+			sb.WriteString("\n")
+		}
+
+		sb.WriteString("### 喜忌汇总\n\n")
 		sb.WriteString(fmt.Sprintf("- **喜用五行**：%s\n", joinWuXing(r.Step4Result.FavorableWuXing)))
 		sb.WriteString(fmt.Sprintf("- **喜用十神**：%s\n", strings.Join(r.Step4Result.FavorableShiShen, "、")))
 		sb.WriteString(fmt.Sprintf("- **忌神五行**：%s\n", joinWuXing(r.Step4Result.UnfavorableWuXing)))
